@@ -2,7 +2,7 @@
 
 An on-chain USDC payment and treasury rebalancing agent built for **Arc Testnet**.
 
-ArcPay Agent enables an owner-controlled smart contract to execute USDC payments and automatically rebalance funds when a configurable balance threshold is reached.
+ArcPay Agent enables an owner-controlled smart contract to execute USDC payments and perform threshold-based rebalancing when the configured balance threshold is reached.
 
 ## ✨ Features
 
@@ -145,19 +145,20 @@ forge build
 ## 📂 Project Structure
 
 ```text
-arcpay-agent/
+arc-payment-agent/
+├── .github/
+│   └── workflows/
+│       └── test.yml
 ├── src/
 │   └── ArcPayAgent.sol
 ├── test/
 │   └── ArcPayAgent.t.sol
 ├── script/
 │   └── DeployArcPayAgent.s.sol
-├── broadcast/
 ├── foundry.toml
 ├── foundry.lock
 ├── constructor.args
 └── README.md
-```
 
 ## ⚙️ Core Contract
 
