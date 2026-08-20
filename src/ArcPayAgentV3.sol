@@ -27,30 +27,14 @@ contract ArcPayAgentV3 {
 
     mapping(uint256 => PaymentRule) public rules;
 
-    event PaymentExecuted(
-        address indexed to,
-        uint256 amount,
-        string reason
-    );
+    event PaymentExecuted(address indexed to, uint256 amount, string reason);
 
-    event RuleCreated(
-        uint256 indexed ruleId,
-        address indexed target,
-        uint256 threshold,
-        uint256 amount
-    );
+    event RuleCreated(uint256 indexed ruleId, address indexed target, uint256 threshold, uint256 amount);
 
-    event RuleExecuted(
-        uint256 indexed ruleId,
-        address indexed target,
-        uint256 amount
-    );
+    event RuleExecuted(uint256 indexed ruleId, address indexed target, uint256 amount);
 
     event RuleDeactivated(uint256 indexed ruleId);
-        event AgentUpdated(
-        address indexed oldAgent,
-        address indexed newAgent
-    );
+    event AgentUpdated(address indexed oldAgent, address indexed newAgent);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -60,7 +44,6 @@ contract ArcPayAgentV3 {
     constructor(address _usdc) {
         owner = msg.sender;
         usdc = IERC20(_usdc);
-    
     }
 
     function setAgent(address _agent) external onlyOwner {
@@ -72,11 +55,7 @@ contract ArcPayAgentV3 {
         emit AgentUpdated(oldAgent, _agent);
     }
 
-    function createRule(
-        address target,
-        uint256 threshold,
-        uint256 amount
-    ) external onlyOwner returns (uint256 ruleId) {
+    function createRule(address target, uint256 threshold, uint256 amount) external onlyOwner returns (uint256 ruleId) {
         require(target != address(0), "Invalid target");
         require(threshold > 0, "Invalid threshold");
         require(amount > 0, "Invalid amount");
@@ -94,48 +73,23 @@ contract ArcPayAgentV3 {
             lastExecutedAt: 0
         });
 
-        emit RuleCreated(
-            ruleId,
-            target,
-            threshold,
-            amount
-        );
+        emit RuleCreated(ruleId, target, threshold, amount);
     }
 
     function executeRule(uint256 ruleId) external {
-        require(
-            msg.sender == owner || msg.sender == agent,
-            "Not authorized executor"
-        );
+        require(msg.sender == owner || msg.sender == agent, "Not authorized executor");
 
         PaymentRule storage rule = rules[ruleId];
 
         require(rule.active, "Rule inactive");
-        require(
-            usdc.balanceOf(address(this)) >= rule.threshold,
-            "Threshold not reached"
-        );
-        require(
-            usdc.balanceOf(address(this)) >= rule.amount,
-            "Insufficient balance"
-        );
+        require(usdc.balanceOf(address(this)) >= rule.threshold, "Threshold not reached");
+        require(usdc.balanceOf(address(this)) >= rule.amount, "Insufficient balance");
 
-        require(
-            usdc.transfer(rule.target, rule.amount),
-            "USDC transfer failed"
-        );
+        require(usdc.transfer(rule.target, rule.amount), "USDC transfer failed");
 
-        emit PaymentExecuted(
-            rule.target,
-            rule.amount,
-            "Rule payment"
-        );
+        emit PaymentExecuted(rule.target, rule.amount, "Rule payment");
 
-        emit RuleExecuted(
-            ruleId,
-            rule.target,
-            rule.amount
-        );
+        emit RuleExecuted(ruleId, rule.target, rule.amount);
     }
 
     function deactivateRule(uint256 ruleId) external onlyOwner {
@@ -151,21 +105,11 @@ contract ArcPayAgentV3 {
     function getRule(uint256 ruleId)
         external
         view
-        returns (
-            address target,
-            uint256 threshold,
-            uint256 amount,
-            bool active
-        )
+        returns (address target, uint256 threshold, uint256 amount, bool active)
     {
         PaymentRule memory rule = rules[ruleId];
 
-        return (
-            rule.target,
-            rule.threshold,
-            rule.amount,
-            rule.active
-        );
+        return (rule.target, rule.threshold, rule.amount, rule.active);
     }
 
     function getBalance() external view returns (uint256) {

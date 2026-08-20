@@ -11,14 +11,8 @@ contract MockUSDCV3 {
         balanceOf[to] += amount;
     }
 
-    function transfer(
-        address to,
-        uint256 amount
-    ) external returns (bool) {
-        require(
-            balanceOf[msg.sender] >= amount,
-            "Insufficient balance"
-        );
+    function transfer(address to, uint256 amount) external returns (bool) {
+        require(balanceOf[msg.sender] >= amount, "Insufficient balance");
 
         balanceOf[msg.sender] -= amount;
         balanceOf[to] += amount;
@@ -74,10 +68,7 @@ contract ArcPayAgentV3Test is Test {
 
         vm.expectEmit(true, true, false, true);
 
-        emit ArcPayAgentV3.AgentUpdated(
-            address(0),
-            automationAgent
-        );
+        emit ArcPayAgentV3.AgentUpdated(address(0), automationAgent);
 
         agent.setAgent(automationAgent);
     }
@@ -101,20 +92,13 @@ contract ArcPayAgentV3Test is Test {
     function testOwnerCanExecuteRule() public {
         vm.prank(owner);
 
-        uint256 ruleId = agent.createRule(
-            recipient,
-            THRESHOLD,
-            PAYMENT
-        );
+        uint256 ruleId = agent.createRule(recipient, THRESHOLD, PAYMENT);
 
         vm.prank(owner);
 
         agent.executeRule(ruleId);
 
-        assertEq(
-            usdc.balanceOf(recipient),
-            PAYMENT
-        );
+        assertEq(usdc.balanceOf(recipient), PAYMENT);
     }
 
     function testAuthorizedAgentCanExecuteRule() public {
@@ -124,20 +108,13 @@ contract ArcPayAgentV3Test is Test {
 
         vm.prank(owner);
 
-        uint256 ruleId = agent.createRule(
-            recipient,
-            THRESHOLD,
-            PAYMENT
-        );
+        uint256 ruleId = agent.createRule(recipient, THRESHOLD, PAYMENT);
 
         vm.prank(automationAgent);
 
         agent.executeRule(ruleId);
 
-        assertEq(
-            usdc.balanceOf(recipient),
-            PAYMENT
-        );
+        assertEq(usdc.balanceOf(recipient), PAYMENT);
     }
 
     function testUnauthorizedAddressCannotExecuteRule() public {
@@ -147,11 +124,7 @@ contract ArcPayAgentV3Test is Test {
 
         vm.prank(owner);
 
-        uint256 ruleId = agent.createRule(
-            recipient,
-            THRESHOLD,
-            PAYMENT
-        );
+        uint256 ruleId = agent.createRule(recipient, THRESHOLD, PAYMENT);
 
         vm.prank(attacker);
 
@@ -169,11 +142,7 @@ contract ArcPayAgentV3Test is Test {
 
         vm.expectRevert("Not owner");
 
-        agent.createRule(
-            recipient,
-            THRESHOLD,
-            PAYMENT
-        );
+        agent.createRule(recipient, THRESHOLD, PAYMENT);
     }
 
     function testAgentCannotDeactivateRule() public {
@@ -183,11 +152,7 @@ contract ArcPayAgentV3Test is Test {
 
         vm.prank(owner);
 
-        uint256 ruleId = agent.createRule(
-            recipient,
-            THRESHOLD,
-            PAYMENT
-        );
+        uint256 ruleId = agent.createRule(recipient, THRESHOLD, PAYMENT);
 
         vm.prank(automationAgent);
 
@@ -215,11 +180,7 @@ contract ArcPayAgentV3Test is Test {
 
         vm.prank(owner);
 
-        uint256 ruleId = agent.createRule(
-            recipient,
-            2_000_000,
-            PAYMENT
-        );
+        uint256 ruleId = agent.createRule(recipient, 2_000_000, PAYMENT);
 
         vm.prank(automationAgent);
 
@@ -235,11 +196,7 @@ contract ArcPayAgentV3Test is Test {
 
         vm.prank(owner);
 
-        uint256 ruleId = agent.createRule(
-            recipient,
-            THRESHOLD,
-            PAYMENT
-        );
+        uint256 ruleId = agent.createRule(recipient, THRESHOLD, PAYMENT);
 
         vm.prank(owner);
 
@@ -259,11 +216,7 @@ contract ArcPayAgentV3Test is Test {
 
         vm.prank(owner);
 
-        uint256 ruleId = agent.createRule(
-            recipient,
-            THRESHOLD,
-            PAYMENT
-        );
+        uint256 ruleId = agent.createRule(recipient, THRESHOLD, PAYMENT);
 
         vm.prank(automationAgent);
         agent.executeRule(ruleId);
@@ -271,10 +224,7 @@ contract ArcPayAgentV3Test is Test {
         vm.prank(automationAgent);
         agent.executeRule(ruleId);
 
-        assertEq(
-            usdc.balanceOf(recipient),
-            PAYMENT * 2
-        );
+        assertEq(usdc.balanceOf(recipient), PAYMENT * 2);
     }
 
     function testTransferOwnership() public {
